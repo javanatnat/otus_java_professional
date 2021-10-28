@@ -10,11 +10,11 @@ public class TestInteger {
         System.out.println("before");
     }
 
-    @Before
-    void beforeException() {
-        System.out.println("beforeException");
-        throw new IllegalArgumentException();
-    }
+//    @Before
+//    void beforeException() {
+//        System.out.println("beforeException");
+//        throw new IllegalArgumentException();
+//    }
 
     @Before
     static void beforeStatic() {
@@ -83,11 +83,11 @@ public class TestInteger {
         System.out.println("after");
     }
 
-    @After
-    void afterException() {
-        System.out.println("afterException");
-        throw new IllegalStateException();
-    }
+//    @After
+//    void afterException() {
+//        System.out.println("afterException");
+//        throw new IllegalStateException();
+//    }
 
     @After
     static void afterStatic() {

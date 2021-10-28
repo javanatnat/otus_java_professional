@@ -42,13 +42,19 @@ public class TestExecutor {
     }
 
     private void clearDataBeforeRun() {
+        clearMethods();
+
         passed = 0;
         total = 0;
     }
 
-    private void initMethods(Class<?> clazz) {
-        clearMethods();
+    private void clearMethods() {
+        beforeMethods.clear();
+        testMethods.clear();
+        afterMethods.clear();
+    }
 
+    private void initMethods(Class<?> clazz) {
         for (Method method : clazz.getDeclaredMethods()) {
             if (methodNeedSkip(method)) {
                 if (methodIsTest(method)) {
@@ -62,12 +68,6 @@ public class TestExecutor {
             if (methodIsBefore(method)) beforeMethods.add(method);
             if (methodIsAfter(method))  afterMethods.add(method);
         }
-    }
-
-    private void clearMethods() {
-        beforeMethods.clear();
-        testMethods.clear();
-        afterMethods.clear();
     }
 
     private static boolean methodNeedSkip(Method method) {
@@ -114,55 +114,38 @@ public class TestExecutor {
             try {
                 Object testObject = constructor.newInstance();
 
-                runBefore(testObject);
-                runTest(test, testObject);
-                runAfter(testObject);
+                runMethods(beforeMethods, testObject);
+                try {
+                    runMethod(test, testObject);
+                } finally {
+                    runMethods(afterMethods, testObject);
+                }
+
+                passed++;
+                System.out.println("\t" + test.getName() + " - success");
 
             } catch (InstantiationException | InvocationTargetException | IllegalAccessException e) {
-//                    e.printStackTrace();
+                e.printStackTrace();
+                System.out.println("\t" + test.getName() + " - error");
             }
         }
     }
 
-    private void runBefore(Object testObject) {
-        for(Method before : beforeMethods) {
-            runBeforeAfterMethod(before, testObject);
+    private void runMethods(
+            List<Method> methods,
+            Object testObject
+    ) throws InvocationTargetException, IllegalAccessException {
+        for(Method before : methods) {
+            runMethod(before, testObject);
         }
     }
 
-    private static void runBeforeAfterMethod(
+    private static void runMethod(
             Method method,
             Object testObject
-    ) {
+    ) throws InvocationTargetException, IllegalAccessException {
         method.setAccessible(true);
-
-        try {
-            method.invoke(testObject);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-//            e.printStackTrace();
-        }
-    }
-
-    private void runTest(
-            Method test,
-            Object testObject
-    ) {
-        test.setAccessible(true);
-
-        try {
-            test.invoke(testObject);
-            passed++;
-            System.out.println("\t" + test.getName() + " - success");
-
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            System.out.println("\t" + test.getName() + " - error");
-        }
-    }
-
-    private void runAfter(Object testObject) {
-        for (Method after : afterMethods) {
-            runBeforeAfterMethod(after, testObject);
-        }
+        method.invoke(testObject);
     }
 
     public void printStatistic() {
