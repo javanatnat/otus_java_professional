@@ -10,4 +10,8 @@ public class Data {
     public Integer getValue() {
         return value;
     }
+
+    public int getPrimitiveValue() {
+        return value.intValue();
+    }
 }

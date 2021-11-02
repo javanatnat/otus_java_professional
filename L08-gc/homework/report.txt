@@ -1,0 +1,19 @@
+Apple M1 16gb
+macOS 11.6
+
+1. G1GC
+memory | result
+--------------------------------
+256m   | Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+512m   | spend msec:12022, sec:12
+1024   | spend msec:10936, sec:10
+1536   | spend msec:10815, sec:10
+2048   | spend msec:10809, sec:10
+
+optimal amount of memory - 1024m
+
+2. without VM options result:
+spend msec:10066, sec:10
+
+3. after optimization result:
+spend msec:2054, sec:2
