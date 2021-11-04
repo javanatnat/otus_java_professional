@@ -15,5 +15,8 @@ optimal amount of memory - 1024m
 2. without VM options result:
 spend msec:10066, sec:10
 
-3. after optimization result:
+3. after optimization #1 result:
 spend msec:2054, sec:2
+
+4. after optimization #2 result:
+spend msec:1055, sec:1

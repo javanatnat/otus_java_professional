@@ -17,36 +17,36 @@ public class Summator {
         if (listValues.size() % 6_600_000 == 0) {
             listValues.clear();
         }
-        sum += data.getPrimitiveValue();
+        sum += data.getValue();
 
-        sumLastThreeValues = data.getPrimitiveValue() + prevValue + prevPrevValue;
+        sumLastThreeValues = data.getValue() + prevValue + prevPrevValue;
 
         prevPrevValue = prevValue;
-        prevValue = data.getPrimitiveValue();
+        prevValue = data.getValue();
 
         for (var idx = 0; idx < 3; idx++) {
-            someValue += (sumLastThreeValues * sumLastThreeValues / (data.getPrimitiveValue() + 1) - sum);
+            someValue += (sumLastThreeValues * sumLastThreeValues / (data.getValue() + 1) - sum);
             someValue = Math.abs(someValue) + listValues.size();
         }
     }
 
-    public Integer getSum() {
+    public int getSum() {
         return sum;
     }
 
-    public Integer getPrevValue() {
+    public int getPrevValue() {
         return prevValue;
     }
 
-    public Integer getPrevPrevValue() {
+    public int getPrevPrevValue() {
         return prevPrevValue;
     }
 
-    public Integer getSumLastThreeValues() {
+    public int getSumLastThreeValues() {
         return sumLastThreeValues;
     }
 
-    public Integer getSomeValue() {
+    public int getSomeValue() {
         return someValue;
     }
 }
