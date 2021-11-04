@@ -1,6 +1,5 @@
 package ru.calculator;
 
-
 /*
 -Xms256m
 -Xmx256m
@@ -10,7 +9,6 @@ package ru.calculator;
 -Xlog:gc=debug:file=./logs/gc-%p-%t.log:tags,uptime,time,level:filecount=5,filesize=10m
 */
 
-
 import java.time.LocalDateTime;
 
 public class CalcDemo {
@@ -19,8 +17,9 @@ public class CalcDemo {
         var summator = new Summator();
         long startTime = System.currentTimeMillis();
 
+        var data = new Data();
         for (var idx = 0; idx < counter; idx++) {
-            var data = new Data(idx);
+            data.setValue(idx);
             summator.calc(data);
 
             if (idx % 10_000_000 == 0) {
@@ -29,11 +28,11 @@ public class CalcDemo {
         }
 
         long delta = System.currentTimeMillis() - startTime;
-        System.out.println(summator.getPrevValue());
-        System.out.println(summator.getPrevPrevValue());
-        System.out.println(summator.getSumLastThreeValues());
-        System.out.println(summator.getSomeValue());
-        System.out.println(summator.getSum());
+        System.out.println("PrevValue          = " + summator.getPrevValue());
+        System.out.println("PrevPrevValue      = " + summator.getPrevPrevValue());
+        System.out.println("SumLastThreeValues = " + summator.getSumLastThreeValues());
+        System.out.println("SomeValue          = " + summator.getSomeValue());
+        System.out.println("Sum                = " + summator.getSum());
         System.out.println("spend msec:" + delta + ", sec:" + (delta / 1000));
     }
 }
