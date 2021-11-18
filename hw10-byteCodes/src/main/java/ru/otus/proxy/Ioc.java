@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Ioc {
     private Ioc() {}
@@ -16,39 +18,36 @@ public class Ioc {
 
     static class MyInvocationHandler implements InvocationHandler {
         private final MyInterface myClassObject;
+        private final Set<String> logClassMethods;
 
         MyInvocationHandler(MyInterface myClassObject) {
             this.myClassObject = myClassObject;
+            this.logClassMethods = getLogClassMethods(myClassObject.getClass());
+        }
+
+        private static Set<String> getLogClassMethods(Class<?> clazz) {
+            Set<String> logMethods = new HashSet<>();
+
+            for(Method m : clazz.getDeclaredMethods()) {
+                if (m.isAnnotationPresent(Log.class)) {
+                    logMethods.add(getSignatureMethod(m));
+                }
+            }
+
+            return logMethods;
+        }
+
+        private static String getSignatureMethod(Method m) {
+            return m.getName() + Arrays.toString(m.getParameterTypes());
         }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            System.out.println("\ninterface invoke method is log = " + method.isAnnotationPresent(Log.class));
-            System.out.println("method invoke class = " + method.getDeclaringClass().getName());
-            if (methodNeedLog(getSameClassMethod(method))) {
+            String signatureMethod = getSignatureMethod(method);
+            if (logClassMethods.contains(signatureMethod)) {
                 System.out.println("\nexecuted method: " + method.getName() + ", params: " + getArgsToString(args));
             }
             return method.invoke(myClassObject, args);
-        }
-
-        private Method getSameClassMethod(Method method) {
-            Class<?> myClassClass = myClassObject.getClass();
-            try {
-                return myClassClass.getMethod(method.getName(), method.getParameterTypes());
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        private boolean methodNeedLog(Method method) {
-            if (!(method == null)) {
-                System.out.println("REFLECTION class method is log = " + method.isAnnotationPresent(Log.class));
-                System.out.println("REFLECTION method class = " + method.getDeclaringClass().getName());
-                return method.isAnnotationPresent(Log.class);
-            }
-            return false;
         }
 
         private String getArgsToString(Object[] args) {
