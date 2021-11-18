@@ -8,22 +8,22 @@ import java.util.Arrays;
 public class Ioc {
     private Ioc() {}
 
-    static MyInterface createMyClass() {
-        InvocationHandler handler = new MyInvocationHandler(new MyInterfaceImpl());
+    static MyInterface getProxyObject(MyInterface impl) {
+        InvocationHandler handler = new MyInvocationHandler(impl);
         return (MyInterface) Proxy.newProxyInstance(Ioc.class.getClassLoader(),
                 new Class<?>[]{MyInterface.class}, handler);
     }
 
     static class MyInvocationHandler implements InvocationHandler {
-        private final MyInterfaceImpl myClassObject;
+        private final MyInterface myClassObject;
 
-        MyInvocationHandler(MyInterfaceImpl myClassObject) {
+        MyInvocationHandler(MyInterface myClassObject) {
             this.myClassObject = myClassObject;
         }
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            System.out.println("interface invoke method is log = " + method.isAnnotationPresent(Log.class));
+            System.out.println("\ninterface invoke method is log = " + method.isAnnotationPresent(Log.class));
             System.out.println("method invoke class = " + method.getDeclaringClass().getName());
             if (methodNeedLog(getSameClassMethod(method))) {
                 System.out.println("\nexecuted method: " + method.getName() + ", params: " + getArgsToString(args));
@@ -44,8 +44,8 @@ public class Ioc {
 
         private boolean methodNeedLog(Method method) {
             if (!(method == null)) {
-                System.out.println("class method is log = " + method.isAnnotationPresent(Log.class));
-                System.out.println("method class = " + method.getDeclaringClass().getName());
+                System.out.println("REFLECTION class method is log = " + method.isAnnotationPresent(Log.class));
+                System.out.println("REFLECTION method class = " + method.getDeclaringClass().getName());
                 return method.isAnnotationPresent(Log.class);
             }
             return false;
