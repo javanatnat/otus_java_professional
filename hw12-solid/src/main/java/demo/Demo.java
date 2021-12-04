@@ -7,7 +7,7 @@ public class Demo {
         System.out.println("Остаток денег в банкомате = " + atm.getRest() + " :");
         System.out.println(atm);
 
-        Cash creditCash = new Cash();
+        Cash creditCash = new Cash(CashCalculator.getInstance());
         creditCash.creditBanknote(Nominal.N_100, 5);
         creditCash.creditBanknote(Nominal.N_200, 10);
         creditCash.creditBanknote(Nominal.N_1000, 5);

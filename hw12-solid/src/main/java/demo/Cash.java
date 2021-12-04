@@ -1,17 +1,20 @@
 package demo;
 
 import java.util.EnumMap;
+import java.util.EnumSet;
 
 public class Cash {
     private final EnumMap<Nominal, Integer> banknotes;
+    private final CashCalculator calculator;
 
-    Cash() {
+    Cash(CashCalculator calculator) {
+        this.calculator = calculator;
         this.banknotes = new EnumMap<>(Nominal.class);
-        setBanknotesToZero();
+        setBanknotesToZero(EnumSet.allOf(Nominal.class));
     }
 
-    private void setBanknotesToZero() {
-        for (var nominal : Nominal.values()) {
+    private void setBanknotesToZero(EnumSet<Nominal> nominals) {
+        for (var nominal : nominals) {
             setBanknoteToZero(nominal);
         }
     }
@@ -24,14 +27,14 @@ public class Cash {
         return new EnumMap<>(this.banknotes);
     }
 
-    void creditBanknote(Nominal nominal, Integer count) {
+    void creditBanknote(Nominal nominal, int count) {
         checkCount(count);
 
-        Integer currCount = banknotes.getOrDefault(nominal, 0);
+        int currCount = banknotes.getOrDefault(nominal, 0);
         banknotes.put(nominal, currCount + count);
     }
 
-    private void checkCount(Integer count) {
+    private void checkCount(int count) {
         if (count < 0) {
             throw new IllegalArgumentException();
         }
@@ -43,17 +46,17 @@ public class Cash {
         }
     }
 
-    void debetBanknote(Nominal nominal, Integer count) {
+    void debetBanknote(Nominal nominal, int count) {
         checkCount(count);
 
-        Integer currCount = banknotes.getOrDefault(nominal, 0);
-        Integer resCount = currCount - count;
+        int currCount = banknotes.getOrDefault(nominal, 0);
+        int resCount = currCount - count;
         checkCount(resCount);
 
         banknotes.put(nominal, resCount);
     }
 
-    void checkDebetSum(Long sum) {
+    void checkDebetSum(long sum) {
         if (sum < 0 || sum > getSum()) {
             throw new IllegalArgumentException();
         }
@@ -61,8 +64,8 @@ public class Cash {
         getDebetCash(sum);
     }
 
-    Cash getDebetCash(Long sum) {
-        return CashCalculator.calcDebetCash(this, sum);
+    Cash getDebetCash(long sum) {
+        return calculator.calcDebetCash(this, sum);
     }
 
     long getSum() {

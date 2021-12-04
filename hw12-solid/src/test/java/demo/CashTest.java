@@ -11,7 +11,7 @@ public class CashTest {
 
     @BeforeEach
     void before() {
-        cash = new Cash();
+        cash = new Cash(CashCalculator.getInstance());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class CashTest {
         cash.creditBanknote(Nominal.N_1, 2);
         cash.creditBanknote(Nominal.N_100, 2);
 
-        Cash debetCash = new Cash();
+        Cash debetCash = new Cash(CashCalculator.getInstance());
         debetCash.creditBanknote(Nominal.N_1, 1);
         debetCash.creditBanknote(Nominal.N_100, 2);
 

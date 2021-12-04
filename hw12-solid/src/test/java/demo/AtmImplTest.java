@@ -18,7 +18,7 @@ public class AtmImplTest {
     void getRestTest() {
         assertThat(atm.getRest()).isEqualTo(0L);
 
-        Cash creditCash = new Cash();
+        Cash creditCash = new Cash(CashCalculator.getInstance());
         creditCash.creditBanknote(Nominal.N_1, 1);
         atm.credit(creditCash);
 
@@ -34,7 +34,7 @@ public class AtmImplTest {
             atm.debet(1L);
         });
 
-        Cash creditCash = new Cash();
+        Cash creditCash = new Cash(CashCalculator.getInstance());
         creditCash.creditBanknote(Nominal.N_1, 150);
         creditCash.creditBanknote(Nominal.N_500, 1);
         atm.credit(creditCash);
@@ -52,7 +52,7 @@ public class AtmImplTest {
 
     @Test
     void creditTest() {
-        Cash creditCash = new Cash();
+        Cash creditCash = new Cash(CashCalculator.getInstance());
         creditCash.creditBanknote(Nominal.N_1, 1);
         atm.credit(creditCash);
 

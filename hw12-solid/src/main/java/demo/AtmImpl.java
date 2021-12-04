@@ -6,16 +6,16 @@ public class AtmImpl implements Atm{
     private final Cash cash;
 
     AtmImpl() {
-        this.cash = new Cash();
+        this.cash = new Cash(CashCalculator.getInstance());
     }
 
     @Override
-    public Long getRest() {
+    public long getRest() {
         return cash.getSum();
     }
 
     @Override
-    public Cash debet(Long sum) {
+    public Cash debet(long sum) {
         cash.checkDebetSum(sum);
 
         Cash debetCash = cash.getDebetCash(sum);

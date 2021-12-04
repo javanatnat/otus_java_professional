@@ -5,10 +5,20 @@ import java.util.Comparator;
 import java.util.EnumMap;
 
 public class CashCalculator {
-    static Cash calcDebetCash(Cash cash, Long sum) {
+    private CashCalculator() {}
+
+    private static class CashCalcHolder {
+        private final static CashCalculator instance = new CashCalculator();
+    }
+
+    static CashCalculator getInstance() {
+        return CashCalcHolder.instance;
+    }
+
+    Cash calcDebetCash(Cash cash, Long sum) {
 
         EnumMap<Nominal, Integer> banknotes = cash.getBanknotes();
-        Cash debetCash = new Cash();
+        Cash debetCash = new Cash(this);
 
         Nominal[] nominals = Nominal.values();
         Arrays.sort(nominals, Comparator.reverseOrder());
