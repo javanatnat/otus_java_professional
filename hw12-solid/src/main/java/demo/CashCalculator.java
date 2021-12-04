@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumMap;
 
-public class CashCalculator {
+public final class CashCalculator {
     private CashCalculator() {}
 
     private static class CashCalcHolder {
