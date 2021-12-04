@@ -9,4 +9,5 @@ include 'hw06-reflections'
 include 'L08-gc:demo'
 include 'L08-gc:homework'
 include 'hw10-byteCodes'
+include 'hw12-solid'
 
