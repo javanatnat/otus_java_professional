@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumMap;
 
-public class CashCalculator {
+public final class CashCalculator {
     private CashCalculator() {}
 
     private static class CashCalcHolder {
@@ -15,7 +15,7 @@ public class CashCalculator {
         return CashCalcHolder.instance;
     }
 
-    Cash calcDebetCash(Cash cash, Long sum) {
+    Cash calcDebetCash(Cash cash, long sum) {
 
         EnumMap<Nominal, Integer> banknotes = cash.getBanknotes();
         Cash debetCash = new Cash(this);
