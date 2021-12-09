@@ -11,3 +11,8 @@ include 'L08-gc:homework'
 include 'hw10-byteCodes'
 include 'hw12-solid'
 
+include 'L13-behavioralPatterns'
+include 'L14-creationalPatterns'
+
+include 'L15-structuralPatterns:demo'
+include 'L15-structuralPatterns:homework'
