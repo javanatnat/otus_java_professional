@@ -8,7 +8,7 @@ public class HistoryListener implements Listener, HistoryReader {
 
     private final HistoryMessage historyMessage;
 
-    HistoryListener() {
+    public HistoryListener() {
         historyMessage = new HistoryMessage();
     }
 

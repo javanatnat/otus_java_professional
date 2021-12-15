@@ -9,16 +9,16 @@ import java.util.Objects;
 public class HistoryMessage {
     private final Map<Long, Message> history;
 
-    HistoryMessage() {
+    public HistoryMessage() {
         history = new HashMap<>();
     }
 
-    void addMessage(Message message) {
+    public void addMessage(Message message) {
         Objects.requireNonNull(message);
         history.put(message.getId(), new Message(message));
     }
 
-    Message getMessage(long id) {
+    public Message getMessage(long id) {
         return history.get(id);
     }
 }
