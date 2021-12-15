@@ -6,13 +6,20 @@ import java.util.Optional;
 
 public class HistoryListener implements Listener, HistoryReader {
 
+    private final HistoryMessage historyMessage;
+
+    public HistoryListener() {
+        historyMessage = new HistoryMessage();
+    }
+
     @Override
     public void onUpdated(Message msg) {
-        throw new UnsupportedOperationException();
+        historyMessage.addMessage(msg);
     }
 
     @Override
     public Optional<Message> findMessageById(long id) {
-        throw new UnsupportedOperationException();
+        Message findMessage = historyMessage.getMessage(id);
+        return (findMessage == null) ? Optional.empty() : Optional.of(new Message(findMessage));
     }
 }
