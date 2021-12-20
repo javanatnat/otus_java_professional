@@ -4,11 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.otus.model.Measurement;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 public class ResourcesFileLoader implements Loader {
     private static final String NAME  = "name";
@@ -26,7 +25,7 @@ public class ResourcesFileLoader implements Loader {
     public List<Measurement> load() {
         //читает файл, парсит и возвращает результат
         try {
-            JsonNode root = mapper.readTree(getFile());
+            JsonNode root = mapper.readTree(getData());
             Iterator<JsonNode> iterator = root.elements();
             List<Measurement> result = new ArrayList<>();
 
@@ -41,9 +40,9 @@ public class ResourcesFileLoader implements Loader {
         }
     }
 
-    private File getFile() {
+    private InputStream getData() {
         ClassLoader classLoader = getClass().getClassLoader();
-        return new File(Objects.requireNonNull(classLoader.getResource(filename)).getFile());
+        return classLoader.getResourceAsStream(filename);
     }
 
     private static Measurement parseNode(JsonNode e) {
