@@ -1,12 +1,8 @@
 package ru.otus.crm.model;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "client")
@@ -17,8 +13,15 @@ public class Client implements Cloneable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", length = 50)
     private String name;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "client", orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Phone> phones;
 
     public Client() {
     }
@@ -33,9 +36,23 @@ public class Client implements Cloneable {
         this.name = name;
     }
 
+    public Client(String name, Address address, List<Phone> phones) {
+        this.id = null;
+        this.name = name;
+        this.address = address;
+        setPhones(phones);
+    }
+
+    public Client(Long id, String name, Address address, List<Phone> phones) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        setPhones(phones);
+    }
+
     @Override
     public Client clone() {
-        return new Client(this.id, this.name);
+        return new Client(this.id, this.name, this.address, this.phones);
     }
 
     public Long getId() {
@@ -54,11 +71,47 @@ public class Client implements Cloneable {
         this.name = name;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public List<Phone> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<Phone> phones) {
+        this.phones = phones;
+        setClientToPhones();
+    }
+
     @Override
     public String toString() {
         return "Client{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    private void setClientToPhones() {
+        phones.forEach(p -> p.setClient(this));
+    }
+
+    public void addPhone(Phone phone) {
+        phones.add(phone);
+        phone.setClient(this);
+    }
+
+    public void removePhone(Phone phone) {
+        phones.remove(phone);
+        phone.setClient(null);
+    }
+
+    public void removePhones() {
+        phones.forEach(p -> p.setClient(null));
+        phones.clear();
     }
 }
