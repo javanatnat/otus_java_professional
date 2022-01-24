@@ -49,33 +49,23 @@ public class DbServiceClientImpl implements DBServiceClient {
 
     @Override
     public Optional<Client> getClient(long id) {
-        Client client = getCacheClient(id);
-        if (client != null) {
-            return Optional.of(client);
-        }
-
-        Optional<Client> result = transactionManager.doInReadOnlyTransaction(session -> {
-            var clientOptional = clientDataTemplate.findById(session, id);
-            LOGGER.info("client: {}", clientOptional);
-            return clientOptional;
-        });
-
-        result.ifPresent(this::cacheClient);
-
-        return result;
+        return Optional.ofNullable(getCacheClient(id))
+                .or(() -> transactionManager.doInReadOnlyTransaction(session -> {
+                    var clientOptional = clientDataTemplate.findById(session, id);
+                    LOGGER.info("client: {}", clientOptional);
+                    clientOptional.ifPresent(this::cacheClient);
+                    return clientOptional;
+                }));
     }
 
     @Override
     public List<Client> findAll() {
-        List<Client> clients = transactionManager.doInReadOnlyTransaction(session -> {
+        return transactionManager.doInReadOnlyTransaction(session -> {
             var clientList = clientDataTemplate.findAll(session);
             LOGGER.info("clientList:{}", clientList);
+            this.cacheClients(clientList);
             return clientList;
         });
-
-        cacheClients(clients);
-
-        return clients;
     }
 
     private void initCache() {
