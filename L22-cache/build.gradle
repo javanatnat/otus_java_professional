@@ -8,4 +8,10 @@ targetCompatibility = JavaVersion.VERSION_17
 dependencies {
     implementation("ch.qos.logback:logback-classic")
     implementation("org.ehcache:ehcache")
+
+    implementation("org.hibernate:hibernate-core")
+    implementation('org.flywaydb:flyway-core')
+
+    implementation("org.postgresql:postgresql")
+    testImplementation("com.h2database:h2")
 }

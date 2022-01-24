@@ -22,11 +22,29 @@ public class HWCacheDemo {
             }
         };
 
+        HwListener<String, Integer> listener2 = new HwListener<String, Integer>() {
+            @Override
+            public void notify(String key, Integer value, String action) {
+                logger.info("key = {}, value = {}, action = {}", key, value, "modify " + action);
+            }
+        };
+
         cache.addListener(listener);
         cache.put("1", 1);
 
         logger.info("getValue:{}", cache.get("1"));
+
+        cache.addListener(listener2);
+        cache.put("1", 11);
+        cache.put("2", 3);
+
+        logger.info("getValue:{}", cache.get("1"));
+
         cache.remove("1");
         cache.removeListener(listener);
+
+        cache.remove("11");
+        cache.remove("2");
+        cache.removeListener(listener2);
     }
 }
