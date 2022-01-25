@@ -19,12 +19,6 @@ public class InMemoryUserDao implements UserDao {
         return Optional.ofNullable(users.get(id));
     }
 
-//    @Override
-//    public Optional<User> findRandomUser() {
-//        Random r = new Random();
-//        return users.values().stream().skip(r.nextInt(users.size() - 1)).findFirst();
-//    }
-
     @Override
     public Optional<User> findByLogin(String login) {
         return users.values().stream().filter(v -> v.getLogin().equals(login)).findFirst();
