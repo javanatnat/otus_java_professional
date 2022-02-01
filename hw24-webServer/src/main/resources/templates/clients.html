@@ -1,0 +1,59 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Клиенты</title>
+    <script>
+
+    </script>
+</head>
+<body>
+<h2>Страница админа для работы с клиентами</h2>
+<h3>Добавление клиента:</h3>
+<div class="top">
+    <form action="/api/client" method="post">
+        <label>
+            Имя
+            <br/>
+            <input type="text" name="name" value="" required placeholder="Иван">
+        </label>
+        <br/>
+        <label>
+            Адрес
+            <br/>
+            <input type="text" name="address" value="" placeholder="Москва, Заречная улица">
+        </label>
+        <br/>
+        <label>
+            Телефоны (вводить через запятую)
+            <br/>
+            <input type="text" name="phones" value="" placeholder="77-894, 22-11-5">
+        </label>
+        <br/>
+        <br/>
+        <input type="submit" value="Добавить">
+        <br/>
+        <br/>
+    </form>
+</div>
+<h3>Список клиентов:</h3>
+<table border=1 cellspacing="0" style="width: 700px" id="clients">
+    <thead>
+        <tr>
+            <td>id</td>
+            <td>имя</td>
+            <td>адрес</td>
+            <td>телефоны</td>
+        </tr>
+    </thead>
+    <tbody>
+        <#list clients as client>
+        <tr>
+            <td>${client.id}</td>
+            <td>${client.name} </td>
+            <td>${client.address}</td>
+            <td>${client.phones}</td>
+        </tr>
+        </#list>
+    </tbody>
+</table>
+</body>
+</html>
