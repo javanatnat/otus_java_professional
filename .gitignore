@@ -36,3 +36,6 @@ out
 *.iws
 *.ipr
 *.idea
+
+# OS generated files
+.DS_Store
