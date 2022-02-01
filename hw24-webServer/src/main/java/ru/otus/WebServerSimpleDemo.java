@@ -14,10 +14,10 @@ import ru.otus.services.*;
     http://localhost:8080
 
     // Страница пользователей
-    http://localhost:8080/users
+    http://localhost:8080/clients
 
     // REST сервис
-    http://localhost:8080/api/user/3
+    http://localhost:8080/api/client/3
 */
 public class WebServerSimpleDemo {
     private static final int WEB_SERVER_PORT = 8080;

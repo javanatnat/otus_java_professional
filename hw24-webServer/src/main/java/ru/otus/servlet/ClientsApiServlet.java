@@ -50,15 +50,20 @@ public class ClientsApiServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        ClientDTO clientDTO = new ClientDTO(
-                null,
-                getClientName(req),
-                getClientAddress(req),
-                getClientPhones(req)
-        );
-        Client client = clientDTO.getClient();
-        Client savedClient = serviceClient.saveClient(client);
-        resp.sendRedirect(PATH_CLIENTS);
+        String name = getClientName(req);
+        if (name != null) {
+            ClientDTO clientDTO = new ClientDTO(
+                    null,
+                    name,
+                    getClientAddress(req),
+                    getClientPhones(req)
+            );
+            Client client = clientDTO.getClient();
+            Client savedClient = serviceClient.saveClient(client);
+            resp.sendRedirect(PATH_CLIENTS);
+        } else {
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
     }
 
     private long extractIdFromRequest(HttpServletRequest request) {

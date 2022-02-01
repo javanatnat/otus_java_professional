@@ -51,6 +51,9 @@ public class ClientDTO {
     }
 
     private List<String> getNumbers() {
+        if (phones == null) {
+            return new ArrayList<>();
+        }
         return Arrays.asList(phones.replaceAll(SPACES, EMPTY).trim().split(DELIM));
     }
 

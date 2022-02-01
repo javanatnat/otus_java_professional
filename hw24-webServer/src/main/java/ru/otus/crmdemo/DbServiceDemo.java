@@ -12,6 +12,8 @@ import ru.otus.crm.dbmigrations.MigrationsExecutorFlyway;
 import ru.otus.crm.model.Client;
 import ru.otus.crm.service.DbServiceClientImpl;
 
+import static ru.otus.crm.service.DbServiceClientImpl.*;
+
 public class DbServiceDemo {
 
     private static final Logger log = LoggerFactory.getLogger(DbServiceDemo.class);
@@ -21,9 +23,9 @@ public class DbServiceDemo {
     public static void main(String[] args) {
         var configuration = new Configuration().configure(HIBERNATE_CFG_FILE);
 
-        var dbUrl = configuration.getProperty("hibernate.connection.url");
-        var dbUserName = configuration.getProperty("hibernate.connection.username");
-        var dbPassword = configuration.getProperty("hibernate.connection.password");
+        var dbUrl = configuration.getProperty(HIBERNATE_URL);
+        var dbUserName = configuration.getProperty(HIBERNATE_LOGIN);
+        var dbPassword = configuration.getProperty(HIBERNATE_PASSWORD);
 
         new MigrationsExecutorFlyway(dbUrl, dbUserName, dbPassword).executeMigrations();
 

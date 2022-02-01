@@ -25,6 +25,10 @@ public class DbServiceClientImpl implements DBServiceClient {
     private static final HwListener<String, Client> LISTENER = new HwListenerClient();
     private static final String HIBERNATE_CFG_FILE = "hibernate.cfg.xml";
 
+    public static final String HIBERNATE_URL = "hibernate.connection.url";
+    public static final String HIBERNATE_LOGIN = "hibernate.connection.username";
+    public static final String HIBERNATE_PASSWORD = "hibernate.connection.password";
+
     private final DataTemplate<Client> clientDataTemplate;
     private final TransactionManager transactionManager;
 
@@ -39,9 +43,9 @@ public class DbServiceClientImpl implements DBServiceClient {
     public static DBServiceClient createDbService() {
         var configuration = new Configuration().configure(HIBERNATE_CFG_FILE);
 
-        var dbUrl = configuration.getProperty("hibernate.connection.url");
-        var dbUserName = configuration.getProperty("hibernate.connection.username");
-        var dbPassword = configuration.getProperty("hibernate.connection.password");
+        var dbUrl = configuration.getProperty(HIBERNATE_URL);
+        var dbUserName = configuration.getProperty(HIBERNATE_LOGIN);
+        var dbPassword = configuration.getProperty(HIBERNATE_PASSWORD);
 
         new MigrationsExecutorFlyway(dbUrl, dbUserName, dbPassword).executeMigrations();
 
