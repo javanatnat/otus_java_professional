@@ -28,4 +28,5 @@ include 'L21-jpql:homework-template'
 
 include 'L22-cache'
 include 'hw24-webServer'
+include 'hw25-di'
 
