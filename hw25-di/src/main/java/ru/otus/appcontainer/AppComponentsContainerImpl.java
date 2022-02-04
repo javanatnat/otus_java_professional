@@ -1,5 +1,7 @@
 package ru.otus.appcontainer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.otus.appcontainer.api.AppComponent;
 import ru.otus.appcontainer.api.AppComponentsContainer;
 import ru.otus.appcontainer.api.AppComponentsContainerConfig;
@@ -10,6 +12,8 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class AppComponentsContainerImpl implements AppComponentsContainer {
+
+    private static final Logger logger = LoggerFactory.getLogger(AppComponentsContainerImpl.class);
 
     private final List<Object> appComponents = new ArrayList<>();
     private final Map<String, Object> appComponentsByName = new HashMap<>();
@@ -31,7 +35,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
         } catch (NoSuchMethodException | InvocationTargetException
                 | InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException();
+            throw new ProcessConfigException("process config exception", e);
         }
     }
 
@@ -83,7 +87,10 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
         for (int i = 0; i < size; i++) {
             Object object = getAppComponent(paramClasses[i]);
-            if (object == null) throw new RuntimeException();
+            if (object == null) {
+                throw new ProcessConfigException("app component ( class = " + paramClasses[i].getName()
+                        + " ) not exists");
+            }
             parameters[i] = object;
         }
 
@@ -91,8 +98,16 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     }
 
     private void setComponent(Object component, Method method) {
-        appComponents.add(component);
-        appComponentsByName.put(getComponentName(method), component);
+        String nameComponent = getComponentName(method);
+        String className = component.getClass().getName();
+
+        if (appComponentsByName.get(nameComponent) == null) {
+            appComponents.add(component);
+            appComponentsByName.put(nameComponent, component);
+            logger.info("add component: name={}, class={}", nameComponent, className);
+        } else {
+            logger.info("repeat component by name, exclude: name={}, class={}", nameComponent, className);
+        }
     }
 
     private String getComponentName(Method method) {

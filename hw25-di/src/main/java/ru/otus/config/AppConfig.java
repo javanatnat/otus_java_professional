@@ -32,4 +32,10 @@ public class AppConfig {
         return new IOServiceConsole(System.out, System.in);
     }
 
+    // wrong config: repeat component by name
+    @AppComponent(order = 0, name = "ioService")
+    public EquationPreparer nameIoService() {
+        return new EquationPreparerImpl();
+    }
+
 }
