@@ -99,19 +99,21 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     private void setComponent(Object component, Method method) {
         String nameComponent = getComponentName(method);
-        String className = component.getClass().getName();
+        checkComponent(nameComponent);
 
-        if (appComponentsByName.get(nameComponent) == null) {
-            appComponents.add(component);
-            appComponentsByName.put(nameComponent, component);
-            logger.info("add component: name={}, class={}", nameComponent, className);
-        } else {
-            logger.info("repeat component by name, exclude: name={}, class={}", nameComponent, className);
-        }
+        appComponents.add(component);
+        appComponentsByName.put(nameComponent, component);
+        logger.info("add component: name={}, class={}", nameComponent, component.getClass().getName());
     }
 
     private String getComponentName(Method method) {
         return method.getAnnotation(AppComponent.class).name();
+    }
+
+    private void checkComponent(String nameComponent) {
+        if (appComponentsByName.containsKey(nameComponent)) {
+            throw new ProcessConfigException("component ( name = " + nameComponent + " ) already exists");
+        }
     }
 
     @Override
