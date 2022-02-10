@@ -1,0 +1,117 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Клиенты</title>
+    <script>
+        function saveClient() {
+            const clientsTable = document.getElementById('clients');
+            const clientsBody = clientsTable.getElementsByTagName('tbody')[0];
+
+            const clientNameInput = document.getElementById("clientName");
+            const clientName = clientNameInput.value;
+
+            if (clientName) {
+                const clientAddressInput = document.getElementById("clientAddress");
+                const clientAddress = clientAddressInput.value;
+
+                const clientPhonesInput = document.getElementById("clientPhones");
+                const clientPhones = clientPhonesInput.value;
+
+                fetch('/api/client', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({name: clientName, address: clientAddress, phones: clientPhones})
+                 })
+                    .then(response => response.json())
+                    .then(client => {
+                        var newRow = clientsBody.insertRow(-1);
+
+                        var newId = newRow.insertCell(0);
+                        var newIdText = document.createTextNode(client.id);
+                        newId.appendChild(newIdText);
+
+                        var newName = newRow.insertCell(1);
+                        var newNameText = document.createTextNode(client.name);
+                        newName.appendChild(newNameText);
+
+                        var newAddress = newRow.insertCell(2);
+                        var newAddressText;
+                        if (client.address) {
+                            newAddressText = document.createTextNode(client.address);
+                        } else {
+                            newAddressText = document.createTextNode('');
+                        }
+                        newAddress.appendChild(newAddressText);
+
+                        var newPhones = newRow.insertCell(3);
+                        var newPhonesText;
+                        if (client.phones) {
+                            newPhonesText = document.createTextNode(client.phones);
+                        } else {
+                            newPhonesText = document.createTextNode('');
+                        }
+                        newPhones.appendChild(newPhonesText);
+
+                        clientNameInput.value = '';
+                        clientAddressInput.value = '';
+                        clientPhonesInput.value = '';
+                    });
+            } else {
+                alert('Введите имя клиента!');
+            }
+        }
+    </script>
+</head>
+<body>
+<h2>Страница админа для работы с клиентами</h2>
+<h3>Добавление клиента:</h3>
+<div class="top">
+    <form action="/api/client" method="post">
+        <label>
+            Имя
+            <br/>
+            <input id="clientName" type="text" name="name" value="" required placeholder="Иван">
+        </label>
+        <br/>
+        <label>
+            Адрес
+            <br/>
+            <input id="clientAddress" type="text" name="address" value="" placeholder="Москва, Заречная улица">
+        </label>
+        <br/>
+        <label>
+            Телефоны (вводить через запятую)
+            <br/>
+            <input id="clientPhones" type="text" name="phones" value="" placeholder="77-894, 22-11-5">
+        </label>
+        <br/>
+        <br/>
+        <!--<input type="submit" value="Добавить">-->
+        <input type="button" value="Добавить" onclick="saveClient()">
+        <br/>
+        <br/>
+    </form>
+</div>
+<h3>Список клиентов:</h3>
+<table border=1 cellspacing="0" style="width: 700px" id="clients">
+    <thead>
+        <tr>
+            <td>id</td>
+            <td>имя</td>
+            <td>адрес</td>
+            <td>телефоны</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="client: ${clients}">
+            <td th:text="${client.id}"/>
+            <td th:text="${client.name}"/>
+            <td th:text="${client.address}"/>
+            <td th:text="${client.phones}"/>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>
