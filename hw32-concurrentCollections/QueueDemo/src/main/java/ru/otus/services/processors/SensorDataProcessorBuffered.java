@@ -21,7 +21,7 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
     private final int bufferSize;
     private final Lock lock = new ReentrantLock();
 
-    private SensorData[] queue;
+    private final SensorData[] queue;
     private volatile int size = 0;
     private volatile int flag = 0;
     private static final AtomicIntegerFieldUpdater<SensorDataProcessorBuffered> FLAG_UPDATER =
@@ -96,11 +96,6 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
     }
 
     private SensorData[] getSortData() {
-        if (isFull()) {
-            sortData(queue);
-            return queue;
-        }
-
         SensorData[] writeData = getNotEmptyPartData();
         sortData(writeData);
         return writeData;
@@ -111,19 +106,11 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
     }
 
     private SensorData[] getNotEmptyPartData() {
-        if (size > 0) {
-            return Arrays.copyOfRange(queue, 0, size);
-        }
-        return new SensorData[0];
+        return Arrays.copyOfRange(queue, 0, size);
     }
 
     private void clearData() {
-        lock.lock();
-        try {
-            queue = new SensorData[bufferSize];
-            size = 0;
-        } finally {
-            lock.unlock();
-        }
+        Arrays.fill(queue, 0, size, null);
+        size = 0;
     }
 }
