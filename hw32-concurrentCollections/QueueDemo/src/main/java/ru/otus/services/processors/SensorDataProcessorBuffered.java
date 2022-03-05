@@ -7,9 +7,9 @@ import ru.otus.api.SensorDataProcessor;
 import ru.otus.api.model.SensorData;
 
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static ru.otus.api.model.SensorData.sensorDataNaturalOrder;
 
@@ -17,12 +17,10 @@ import static ru.otus.api.model.SensorData.sensorDataNaturalOrder;
 public class SensorDataProcessorBuffered implements SensorDataProcessor {
     private static final Logger log = LoggerFactory.getLogger(SensorDataProcessorBuffered.class);
 
+    private final BlockingQueue<SensorData> queue;
     private final SensorDataBufferedWriter writer;
     private final int bufferSize;
-    private final Lock lock = new ReentrantLock();
 
-    private final SensorData[] queue;
-    private volatile int size = 0;
     private volatile int flag = 0;
     private static final AtomicIntegerFieldUpdater<SensorDataProcessorBuffered> FLAG_UPDATER =
             AtomicIntegerFieldUpdater.newUpdater(SensorDataProcessorBuffered.class, "flag");
@@ -33,7 +31,7 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
     ) {
         this.bufferSize = bufferSize;
         this.writer = writer;
-        this.queue = new SensorData[bufferSize];
+        this.queue = new PriorityBlockingQueue<>(bufferSize, sensorDataNaturalOrder());
     }
 
     @Override
@@ -53,9 +51,13 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
     public void flush() {
         try {
             if (FLAG_UPDATER.compareAndSet(this, 0, 1)) {
-                if (isNotEmpty()) {
-                    writer.writeBufferedData(Arrays.asList(getSortData()));
-                    clearData();
+                if (!queue.isEmpty()) {
+                    log.info("write: buffer size = " + queue.size());
+                    List<SensorData> buffer = new ArrayList<>(queue.size());
+                    queue.drainTo(buffer);
+                    writer.writeBufferedData(buffer);
+                    queue.clear();
+                    log.info("SUCCESS finish write");
                 }
                 FLAG_UPDATER.compareAndSet(this, 1, 0);
             }
@@ -74,43 +76,10 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
     }
 
     private boolean offer(SensorData data) {
-        if (isFull()) {
-            return false;
-        }
-        lock.lock();
-        try {
-            queue[size] = data;
-            size++;
-            return true;
-        } finally {
-            lock.unlock();
-        }
+        return queue.offer(data);
     }
 
     private boolean isFull() {
-        return size >= bufferSize;
-    }
-
-    private boolean isNotEmpty() {
-        return size > 0;
-    }
-
-    private SensorData[] getSortData() {
-        SensorData[] writeData = getNotEmptyPartData();
-        sortData(writeData);
-        return writeData;
-    }
-
-    private void sortData(SensorData[] sensorData) {
-        Arrays.sort(sensorData, sensorDataNaturalOrder());
-    }
-
-    private SensorData[] getNotEmptyPartData() {
-        return Arrays.copyOfRange(queue, 0, size);
-    }
-
-    private void clearData() {
-        Arrays.fill(queue, 0, size, null);
-        size = 0;
+        return queue.size() >= bufferSize;
     }
 }
