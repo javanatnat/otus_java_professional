@@ -6,7 +6,7 @@ import ru.otus.protobuf.generated.ServerResponse;
 import java.util.concurrent.CountDownLatch;
 
 public class GetValuesObserver implements StreamObserver<ServerResponse> {
-    private int currentValue;
+    private volatile int currentValue;
     private final CountDownLatch latch;
 
     public GetValuesObserver(
