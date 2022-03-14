@@ -44,14 +44,17 @@ public class GRPCClient {
                 e.printStackTrace();
             }
 
-            int currentServerValue = observer.getCurrentValue();
-            if (currentServerValue != oldServerValue) {
-                currentValue += currentServerValue;
-                oldServerValue = currentServerValue;
-            }
-            currentValue++;
+            synchronized (observer) {
+                int currentServerValue = observer.getCurrentValue();
 
-            System.out.println("(iteration=" + ( i + 1 ) + ") current value: " + currentValue);
+                if (currentServerValue != oldServerValue) {
+                    currentValue += currentServerValue;
+                    oldServerValue = currentServerValue;
+                }
+                currentValue++;
+
+                System.out.println("(iteration=" + (i + 1) + ") current value: " + currentValue);
+            }
         }
 
         latch.await();

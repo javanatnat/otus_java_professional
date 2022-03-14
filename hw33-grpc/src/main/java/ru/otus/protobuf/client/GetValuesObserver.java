@@ -23,7 +23,9 @@ public class GetValuesObserver implements StreamObserver<ServerResponse> {
 
     @Override
     public void onNext(ServerResponse value) {
-        currentValue = value.getValue();
+        synchronized (this) {
+            currentValue = value.getValue();
+        }
         System.out.println("\tvalue from server: " + currentValue);
     }
 
