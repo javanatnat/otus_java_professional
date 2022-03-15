@@ -39,3 +39,6 @@ out
 
 # OS generated files
 .DS_Store
+
+# Java Heap Dump
+.hprof
