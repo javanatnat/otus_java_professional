@@ -1,0 +1,92 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.6.3'
+    id 'com.google.protobuf' version '0.8.16'
+    id 'idea'
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+dependencies {
+    implementation("ch.qos.logback:logback-classic")
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.postgresql:postgresql")
+
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
+    implementation("io.github.lognet:grpc-spring-boot-starter:3.3.0")
+    implementation("com.google.protobuf:protobuf-java:${Versions.protobuf}")
+    implementation("io.grpc:grpc-core:${Versions.grpc}")
+
+    implementation("com.google.errorprone:error_prone_annotations:2.9.0")
+    implementation("org.checkerframework:checker-qual:3.8.0")
+
+    implementation("com.google.code.gson:gson")
+    implementation("com.google.code.findbugs:jsr305")
+    implementation("com.github.jgonian:commons-ip-math:1.32")
+
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
+    testImplementation("it.ozimov:embedded-redis:0.7.1")
+    testImplementation("io.grpc:grpc-testing:1.27.2")
+}
+
+def filesBaseDir = "$projectDir/build/generated"
+def protoSrcDir = "$projectDir/build/generated/proto"
+def grpcSrcDir = "$projectDir/build/generated/grpc"
+
+sourceSets {
+    main {
+        proto {
+            srcDir protoSrcDir
+        }
+        java {
+            srcDir grpcSrcDir
+        }
+    }
+}
+
+idea {
+    module {
+        sourceDirs += file(protoSrcDir);
+        sourceDirs += file(grpcSrcDir);
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.12.1'
+    }
+
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.30.2'
+
+        }
+    }
+
+    generatedFilesBaseDir = filesBaseDir
+    generateProtoTasks {
+        ofSourceSet('main')*.plugins { grpc {} }
+    }
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.with {
+        encoding = 'UTF-8'
+    }
+}

@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package ru.otus.protobuf.generated;
+
+option java_multiple_files = true;
+
+message BruteforceRequest {
+    string login = 1;
+    string password = 2;
+    string ip = 3;
+}
+
+message DropBucketRequest {
+    string login = 1;
+    string ip = 2;
+}
+
+message IpListRequest {
+    string ip = 1;
+}
+
+message BruteforceResponse {
+    enum AnswerType {
+        YES = 0;
+        NO = 1;
+    }
+    AnswerType value = 1;
+}
+
+message SimpleResponse {
+    bool ok = 1;
+}
+
+service AntiBruteforceService {
+    rpc isBruteforce(BruteforceRequest) returns (BruteforceResponse);
+    rpc dropBucket(DropBucketRequest) returns (SimpleResponse);
+    rpc addIpToBlacklist(IpListRequest) returns (SimpleResponse);
+    rpc dropIpFromBlacklist(IpListRequest) returns (SimpleResponse);
+    rpc addIpToWhitelist(IpListRequest) returns (SimpleResponse);
+    rpc dropIpFromWhitelist(IpListRequest) returns (SimpleResponse);
+}

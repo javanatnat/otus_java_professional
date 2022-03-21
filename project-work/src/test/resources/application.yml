@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  redis:
+    host: localhost
+    port: 6379
+
+cash:
+  schedulingEnabled: false
+
+countAttempt:
+  login: 2
+  password: 3
+  ip: 4
